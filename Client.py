@@ -1,43 +1,45 @@
 import socket
 import threading
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((socket.gethostname(), 1236))
 
-nickname = input("Choose a nickname : ")
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect((socket.gethostname(), 1239))
+name = input("Please provide your name : ")
+
+
+# To input the message and send it to the server
+def send():
+    while True:
+        message = input().encode("utf-8")
+        client.send(message)
 
 
 def recieve():
     while True:
-        try:
-            message = client.recv(1024).decode("utf-8")
-            if message == 'NICK':
-                client.send(nickname.encode("utf-8"))
+        message = client.recv(1024).decode("utf-8")
+
+        # The first message recieved from the server asking for the name, in response to which the name of the client
+        # is sent.
+        if message == 'Name':
+            client.send(name.encode("utf-8"))
+            print("Waiting for server confirmation...")
+        # If the message sent by the server has /private as the first word, it is avoided if it is not meant for the
+        # client in question
+        elif message.split()[2] == '/private':
+            if len(message.split()) > 3:
+                if message.split()[3] == name:
+                    print(f"{message.split()[0].upper()} HAS SENT YOU A PRIVATE MESSAGE.")
+                    print(f"{message.split()[0]} : {' '.join(message.split()[4:])}")
+                else:
+                    continue
             else:
-                message_list = message.split(" ")
-                try:
-                    if (message_list[1] == r"\private") and (message_list[2] != nickname):
-                        continue
-                    elif (message_list[1] == r"\private") and (message_list[2] == nickname):
-                        print(str(message_list[0][:-1]).upper(), "HAS SENT YOU A PRIVATE MESSAGE")
-                        message = message_list[0] + " " + " ".join(message_list[3:])
-                except:
-                    pass
                 print(message)
-        except:
-            print("An error has occured.")
-            client.close()
-            break
+        else:
+            print(message)
 
 
-def write():
-    while True:
-        message = f"{nickname}: {input('')}"
-        client.send(message.encode("utf-8"))
-
+write_thread = threading.Thread(target=send)
+write_thread.start()
 
 recieve_thread = threading.Thread(target=recieve)
 recieve_thread.start()
-
-write_thread = threading.Thread(target=write)
-write_thread.start()
