@@ -2,7 +2,7 @@
 
 A chat server that can accept requests from clients and serve as the intermediary between different clients to talk to each other in a chat-room.
 
-***
+
 ## Approach
 There are two python files, one for the server and the other for the client. <br> <br>
 In the server file,
@@ -31,7 +31,7 @@ which is inputted and saved to be sent later.
     the server.
 * Multithreading is used to run multiple instances of recieve and write at the same time.
 
-***
+
 ## Features
 * Clients can join the server only if the server authorizes it.
 * Clients can join and leave the server whenever they want.
@@ -49,7 +49,7 @@ in the chat room.
 * ```**<text>**``` is used to make the text in between the star symbols bold.
 * ```__<text>__``` is used to italicize the text in between the double underscores.
 * ```~~<text>~~``` is used to strike through the text in between the tilde symbols.
-***
+
 
 ## Instructions
 * Run ```Server.py``` to start the chat-room.
